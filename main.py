@@ -1,63 +1,84 @@
-import os
+import os, json, time, platform
 import time
+import platform
 
 
+# Função para criar o arquivo config caso não esteja criado
+def write_json(argument_config):
+    with open('config.json', 'w', encoding="utf-8") as arq:
+        json.dump(argument_config, arq, indent=4, ensure_ascii=False)
+        
+        
+# Função para ler o arquivo config.json
+def load_json(arq):
+    with open(arq, 'r', encoding="utf-8") as arq:
+        data = json.load(arq)
+        return data["diretory"]
+
+
+# Função para limpar a tela do console
+def clear_console():
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
+
+
+# Função para escrever uma string lentamente no console
 def escrever(word, next=True):
     for char in word:
-        print(char, end="")
-        time.sleep(0.05)
+        print(char, end="", flush=True)
+        time.sleep(0.005)
     
     if next:
         print()
+    return ""
 
 
-def criar_pasta(diretorio, client_name):
-    caminho = os.path.join(diretorio, client_name)
+# Função para criar uma pasta
+def criar_pasta(diretorio, nome_cliente):
+    caminho = os.path.join(diretorio, nome_cliente)
     os.makedirs(caminho, exist_ok=True)
-    time.sleep(1)
     escrever("Criação da pasta foi um sucesso!!!")
 
 
-def criar_arquivo(diretorio, client_name):
-    caminho = os.path.join(diretorio, client_name, client_name + ".cdr")
+# Função para criar um arquivo
+def criar_arquivo(diretorio, nome_cliente):
+    caminho = os.path.join(diretorio, nome_cliente, nome_cliente + ".cdr")
     with open(caminho, "w") as arquivo:
         pass
-    time.sleep(1)
-    escrever("Criação da arquivo foi um sucesso!!!")
+    escrever("Criação do arquivo foi um sucesso!!!")
 
 
 
-client_name = input(escrever("Name Client: "))
+# Solicita o nome do cliente
+nome_cliente = input(escrever("Nome do Cliente: "))
+clear_console()
 
 
-if os.path.exists("config.txt"):
+
+# Verifica se o arquivo de configuração existe
+if os.path.exists("config.json"):
     escrever("Arquivo de pré-configuração encontrado!!!")
-    time.sleep(1)
-    escrever("Analizando dados...")
-    time.sleep(1)
+    escrever("Analisando dados...")
+    diretorio = load_json("config.json")
+    clear_console()
     
-    with open("config.txt", "r") as config_file:
-        config_data = config_file.read()
-        escrever("Configuration loaded:", config_data)
-        diretorio = config_data
-        escrever("Análise completa!!!")
-        time.sleep(1)
- 
 else:
     escrever("Arquivo de pré-configuração não encontrado.")
-    time.sleep(1)
-    
-    diretorio = input(escrever("Directory: "))  # Exemplo: /storage/emulated/0/Documents
-    
-    with open("config.txt", "w") as config_file:
-        config_file.write(diretorio)
-        escrever("Salvando pré-configuração")
-        time.sleep(1)
-        escrever("Arquivo config.txt salvo!!!")
+    diretorio = input(escrever("Diretório: "))  # Exemplo: /storage/emulated/0/Documents
+    dir = {
+    "diretory" : f"{diretorio}"
+    }
+    escrever("Salvando pré-configuração")
+    write_json(dir)
+    escrever("Arquivo config.json salvo!!!")
+    time.sleep(0.5)
+    clear_console()
 
-    
+print(f"Nome: {nome_cliente}\nCaminho: {diretorio}\n")
+
 # Criar pasta e arquivo
-criar_pasta(diretorio, client_name)
-criar_arquivo(diretorio, client_name)
-    
-    
+criar_pasta(diretorio, nome_cliente)
+criar_arquivo(diretorio, nome_cliente)
+
