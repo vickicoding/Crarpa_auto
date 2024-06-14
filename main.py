@@ -4,6 +4,7 @@ import platform
 
 
 name_config = "Config.json"
+extension = ".cdr"
 
 
 # Função para criar o arquivo config caso não esteja criado
@@ -46,7 +47,7 @@ def criar_pasta(diretorio, nome_cliente):
 
 # Função para criar um arquivo
 def criar_arquivo(diretorio, nome_cliente):
-    caminho = os.path.join(diretorio, nome_cliente, nome_cliente + ".cdr")
+    caminho = os.path.join(diretorio, nome_cliente, nome_cliente + extension)
     if not os.path.exists(caminho):
         with open(caminho, "w") as file:
             pass
