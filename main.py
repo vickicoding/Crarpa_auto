@@ -1,121 +1,198 @@
-import os, json, time, platform
-import time
-import platform
+from CTkMessagebox import CTkMessagebox
+from customtkinter import *
+from pathlib import Path
+import crarpa_main, os, utils
+
+# Mudar tema
+set_appearance_mode("dark")
+set_default_color_theme("dark-blue")
 
 
-name_config = "Config.json"
-extension = ".cdr"
+# config
+file_extense = ".cdr"
 
 
-# Função para criar o arquivo config caso não esteja criado
-def write_json(argument_config):
-    with open(name_config, 'w', encoding="utf-8") as arq:
-        json.dump(argument_config, arq, indent=4, ensure_ascii=False)
-        
-        
-# Função para ler o arquivo config.json
-def load_json(arq):
-    with open(arq, 'r', encoding="utf-8") as arq:
-        data = json.load(arq)
-        return data["diretory"]
+# Criar janela
+app = CTk()
+WINX, WINY = 500, 300
+app.geometry(str(WINX)+"x"+str(WINY))
+app.title("Crarpa Auto")
+# app.iconbitmap("image\logo_icon.ico")
+app.resizable(False, False)
 
 
-# Função para limpar a tela do console
-def clear_console():
-    if platform.system() == "Windows":
-        os.system("cls")
-    else:
-        os.system("clear")
+#Funções da aplicação
 
-
-# Função para escrever uma string lentamente no console
-def escrever(word, next=True):
-    for char in word:
-        print(char, end="", flush=True)
-        time.sleep(0.01)
+def verificar_dados(name_str, diretory):
+    response = True
     
-    if next:
-        print()
-    return ""
-
-
-# Função para criar uma pasta
-def criar_pasta(diretorio, nome_cliente):
-    caminho = os.path.join(diretorio, nome_cliente)
-    os.makedirs(caminho, exist_ok=True)
-
-
-# Função para criar um arquivo
-def criar_arquivo(diretorio, nome_cliente):
-    caminho = os.path.join(diretorio, nome_cliente, nome_cliente + extension)
-    if not os.path.exists(caminho):
-        with open(caminho, "w") as file:
-            pass
-        #Criação do arquivo foi um sucesso
-        return True
+    if not name_str: # verificar se o texto não está vazio e exibir uma cor vermelha no input
+        input_client.configure(fg_color='red')
+        # input_client.focus()
+        response = False
     
-    else:
+    elif not os.path.exists(diretory): # verificar se esse caminho existe e exibir uma cor vermelha no input
+        input_dir.configure(fg_color='red')
+        # input_dir.focus()
+        response = False
+    
+    elif verificar_existencia(name_str, diretory):
+        input_client.configure(fg_color='red')
+        response = False
+        
+    
+    if name_str and not verificar_existencia(name_str, diretory): input_client.configure(fg_color=['#F9F9FA', '#343638']) 
+    if os.path.exists(diretory): input_dir.configure(fg_color=['#F9F9FA', '#343638'])
+
+    if name_str and os.path.exists(diretory): return True
+    if not response:
         return False
 
-#Função para obter o diretório do usuário ou do arquivo caso exista
-def get_diretory():
-    if os.path.exists(name_config):
-        escrever("Carregando Configurações!!!")
-        diretorio = load_json(name_config)
-        clear_console()
-        
-    else:
-        escrever("Arquivo de configuração não encontrado...")
-        while True:
-            diretorio = input(escrever("Diretório: "))  # Exemplo: ~/Documents
-            
-            if not diretorio or not diretorio.strip():
-                clear_console()
-                escrever("Diretório não pode ser vazio!!!")
-            
-            else:
-                break        
-            
-            
-        dir = {
-        "diretory" : f"{diretorio}"
-        }
-        escrever("Salvando pré-configuração")
-        write_json(dir)
-        escrever("Arquivo config.json salvo!!!")
-        time.sleep(0.5)
-        clear_console()
-    
-    return diretorio
 
-#Função para receber um nome válido do usuário
-def get_name():
-    while True:
-        name = input(escrever("Nome do Cliente: "))
+def verificar_existencia(name_file, dir_file): 
+    if os.path.exists(dir_file):
+        if dir_file and name_file in os.listdir(dir_file):
+            return True
+    
+    return False
+
+
+def button_gerar():
+    # print(input_dir.cget('fg_color'))
+    
+    name = input_client.get()
+    caminho = input_dir.get()
+    
+    if verificar_dados(name, caminho): # Verificar se o campo de nomes não está vazio e se o caminho existe 
+        print(f'Name: {name}\nDir: {caminho}')
         
-        if not name.strip():
-            clear_console()
-            escrever("Nome não pode ser vaio!!!")
-            time.sleep(0.5)
+        if crarpa_main.run(name, caminho, file_extense):
+            CTkMessagebox(title="Arquivo criado com sucesso", message=f"NOME: \n{name}\n\nDIR:\n{caminho}", icon="check", header=False)
+            print("Successfully created .cdr file and folder")
+            
+            utils.text_formated_json(name, caminho)
+            
+            if var_checkbox.get() == "open":
+                cam = f"{caminho}\\{name}\\{name}{file_extense}"
+                utils.open_cdr(cam)
         
         else:
-            return name    
+            if verificar_existencia(name, caminho):
+                CTkMessagebox(title="Erro", message=f"Não foi possível realizar a operação\n\nERROR: 001", icon="cancel", header=False)
             
+            else:
+                CTkMessagebox(title="Erro", message=f"Não foi possível realizar a operação\n\nERROR: 002", icon="cancel", header=False)
+                
+            print("Error in create file and archive")
+                             
+                             
+        
 
-# Solicita o nome do cliente
-nome_cliente = get_name()
-clear_console()
 
-# Obter diretório
-diretorio = get_diretory()
+def press_key(event):
+    key = event.keysym
+    name = input_client.get()
+    caminho = input_dir.get()
+    verificar_dados(name, caminho)
+    
+    if key == "Return":
+        button_gerar()
 
 
-print(f"Nome: {nome_cliente}\nCaminho: {diretorio}\n")
+def inserir(obj, posx=None, posy=None, side=None):
+    if posx or posy:
+        obj.place(x=posx, y=posy)
+        
+    elif side != None:
+        obj.pack(side=side)
+        
+    else:
+        return Exception
+    
 
-# Criar pasta e arquivo
-criar_pasta(diretorio, nome_cliente)
-if criar_arquivo(diretorio, nome_cliente):
-    escrever("Sucess!!!")
+def search_dir():
+    caminho = Path(filedialog.askdirectory())
+    print(caminho)
+    var_dir.set(str(caminho))
+    if os.path.exists(input_dir.get()): input_dir.configure(fg_color=['#F9F9FA', '#343638'])
+   
 
-else:
-    escrever("Arquivo já existente")
+def checkbox_value():
+    print(f"CheckBox: {var_checkbox.get()}")
+
+
+def checar_estado():
+    try:
+        caminho = utils.ultimo_status()
+        var_dir.set(caminho)
+    
+    except:
+        var_dir.set(r"C:/Users")
+
+app.bind('<Key>', func=press_key)
+
+ 
+# Classe para criar Frames
+class Frame:
+    def __init__(self, root, width, height):
+        self.root = root
+        self.width = width
+        self.height = height
+    
+        self.frame = CTkFrame(self.root, self.width, self.height)
+    
+    def adicionar(self, side):
+        inserir(self.frame, side=side)
+        
+
+# create frames 
+frame_right = Frame(root=app, width=(WINX-35), height=WINY)
+frame_left = Frame(root=app, width=30, height=WINY)
+frame_left.frame.configure(fg_color="transparent")
+
+
+# widget frame right
+titulo_label_right = CTkLabel(master=frame_right.frame, text="Sistema de Gerenciamento", font=("Impact", 15))
+
+name_client_label = CTkLabel(master=frame_right.frame, text="Name: ", font=("Arial", 10))
+input_client = CTkEntry(master=frame_right.frame, placeholder_text="Client: ", width=270)
+dir_label = CTkLabel(master=frame_right.frame, text="Dir: ", font=("Arial Bold", 10))
+var_dir = StringVar()
+input_dir = CTkEntry(master=frame_right.frame, textvariable=var_dir, width=270)
+btn_dir = CTkButton(master=frame_right.frame, text="Search", width=50 ,command=search_dir)
+
+var_checkbox = StringVar()
+checkbox_open = CTkCheckBox(master=frame_right.frame, text='open', variable=var_checkbox, onvalue="open", offvalue="anything", command=checkbox_value)
+
+btn_right = CTkButton(master=frame_right.frame, text="Gerar", command=button_gerar, width=70)
+
+
+# widget frame left
+version_label_left = CTkLabel(master=frame_left.frame, text="v1.0", font=("Impact", 10))
+# btn_left_top = CTkButton(master=frame_left.frame, text="-",width=10, height=30, command=scale_bar_left)
+
+
+# Lançar frames
+frame_right.adicionar(side=RIGHT)
+frame_left.adicionar(side=LEFT)
+
+# Lançar widget right
+inserir(titulo_label_right, (frame_right.width/2) -90, 10)
+inserir(name_client_label, 25, 70)
+inserir(input_client, 70, 70)
+inserir(dir_label, 25, 110)
+inserir(input_dir, 70, 110)
+inserir(btn_dir, 350, 110)
+inserir(checkbox_open, 70, 150)
+inserir(btn_right, 380, 250)
+
+
+# Lançar widget left
+# inserir(btn_left_top, frame_left.width/4, 10)
+inserir(version_label_left, frame_left.width/4, frame_right.height -30)
+
+
+checar_estado()
+
+# loop
+app.mainloop()
