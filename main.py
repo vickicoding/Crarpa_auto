@@ -64,11 +64,11 @@ def button_gerar():
     caminho = input_dir.get()
     
     if verificar_dados(name, caminho): # Verificar se o campo de nomes não está vazio e se o caminho existe 
-        print(f'Name: {name}\nDir: {caminho}')
+        # print(f'Name: {name}\nDir: {caminho}')
         
         if crarpa_main.run(name, caminho, file_extense):
-            CTkMessagebox(title="Arquivo criado com sucesso", message=f"NOME: \n{name}\n\nDIR:\n{caminho}", icon="check", header=False)
-            print("Successfully created .cdr file and folder")
+            CTkMessagebox(title="File created successfully", message=f"NAME: \n{name}\n\nDIR:\n{caminho}", icon="check", header=False)
+            # print("Successfully created .cdr file and folder")
             
             utils.text_formated_json(name, caminho)
             
@@ -78,12 +78,12 @@ def button_gerar():
         
         else:
             if verificar_existencia(name, caminho):
-                CTkMessagebox(title="Erro", message=f"Não foi possível realizar a operação\n\nERROR: 001", icon="cancel", header=False)
+                CTkMessagebox(title="Erro", message=f"The operation could not be performed\n\nERROR: 001", icon="cancel", header=False)
             
             else:
-                CTkMessagebox(title="Erro", message=f"Não foi possível realizar a operação\n\nERROR: 002", icon="cancel", header=False)
+                CTkMessagebox(title="Erro", message=f"The operation could not be performed\n\nERROR: 002", icon="cancel", header=False)
                 
-            print("Error in create file and archive")
+            # print("Error in create file and archive")
                              
                              
         
@@ -112,13 +112,14 @@ def inserir(obj, posx=None, posy=None, side=None):
 
 def search_dir():
     caminho = Path(filedialog.askdirectory())
-    print(caminho)
+    # print(caminho)
     var_dir.set(str(caminho))
     if os.path.exists(input_dir.get()): input_dir.configure(fg_color=['#F9F9FA', '#343638'])
    
 
 def checkbox_value():
-    print(f"CheckBox: {var_checkbox.get()}")
+    # print(f"CheckBox: {var_checkbox.get()}")
+    pass
 
 
 def checar_estado():
@@ -152,7 +153,7 @@ frame_left.frame.configure(fg_color="transparent")
 
 
 # widget frame right
-titulo_label_right = CTkLabel(master=frame_right.frame, text="Sistema de Gerenciamento", font=("Impact", 15))
+titulo_label_right = CTkLabel(master=frame_right.frame, text="Management System", font=("Impact", 15))
 
 name_client_label = CTkLabel(master=frame_right.frame, text="Name: ", font=("Arial", 10))
 input_client = CTkEntry(master=frame_right.frame, placeholder_text="Client: ", width=270)
@@ -164,7 +165,7 @@ btn_dir = CTkButton(master=frame_right.frame, text="Search", width=50 ,command=s
 var_checkbox = StringVar()
 checkbox_open = CTkCheckBox(master=frame_right.frame, text='open', variable=var_checkbox, onvalue="open", offvalue="anything", command=checkbox_value)
 
-btn_right = CTkButton(master=frame_right.frame, text="Gerar", command=button_gerar, width=70)
+btn_right = CTkButton(master=frame_right.frame, text="Make", command=button_gerar, width=70)
 
 
 # widget frame left
