@@ -16,26 +16,29 @@ def open_cdr(cam):
     extense = "." + str(caminho_origem).rsplit(f'.', 1)[-1]
     caminho_finally = f'"{str(dir_parents) + f"\\" + name + extense}"'
     
-    print(caminho_finally)
-    print(name)
-    print(extense)
+    # print(caminho_finally)
+    # print(name)
+    # print(extense)
 
     os.system(caminho_finally)
 
 
 def create_write_json(text):
     if create_file(file_config):
-        print("Config Create Sucess")
+        # print("Config Create Sucess")
         
         if write_file(name_arq=file_config, content=text):
-            print("Write Sucess")
+            # print("Write Sucess")
+            pass
         else:
-            print("Error writed")
+            # print("Error writed")
+            pass
         
     else:
-        print("Error Created")
+        # print("Error Created")
         if write_file(name_arq=file_config, content=text):
-            print("Write Sucess")
+            # print("Write Sucess")
+            pass
 
 
 #função para ler um arquivo
@@ -45,15 +48,15 @@ def read_file_json(arq):
             data_json = json.load(arq)
             
             if not data_json == "":
-                print("Arquivo Acessado")
+                # print("Arquivo Acessado")
                 return data_json
 
             else:
-                print("Arquivo vazio")
+                # print("Arquivo vazio")
                 return False
             
     except FileNotFoundError:
-        print("Arquivo não encontrado")
+        # print("Arquivo não encontrado")
         return False
 
 
@@ -78,9 +81,9 @@ def create_dir(arq, caminho, return_new_path=False):
     
     new_path = str(diretory) + "\\" + name + str("." + arq.rsplit('.', 1)[-1]) #Caminho completo da nova pasta junto ao arquivo
     Path(new_path)
-    print(new_path)
+    # print(new_path)
     old_path = Path(diretory) / arq #Caminho onde o arquivo esta antes de ser movido
-    print(f'\nDIR ATUAL: {Path.cwd()}\nNOVA DIR: {new_path}\nFONTE DIR: {old_path}')
+    # print(f'\nDIR ATUAL: {Path.cwd()}\nNOVA DIR: {new_path}\nFONTE DIR: {old_path}')
     
     if return_new_path:
         return old_path, new_path
@@ -158,14 +161,14 @@ def remove_barras(word):
 
 
 def ultimo_status():
-    print("Lendo ultimos arquivos")
+    # print("Lendo ultimos arquivos")
     dados = read_file_json(file_config)
     
     if not dados == "":
-        print("dados enviados com sucesso")
+        # print("dados enviados com sucesso")
         caminho = dados["Dates"][-1]["Dir"]
         return caminho
     
     else:
-        print("error ao tentar logar os ultimos caminhos")
+        # print("error ao tentar logar os ultimos caminhos")
         return FileNotFoundError

@@ -8,17 +8,17 @@ def criar_pasta(nome_cliente, diretorio):
         
     if not os.path.exists(caminho):
         caminho.mkdir(exist_ok=True)
-        print("Pasta criada com sucesso")
+        # print("Pasta criada com sucesso")
         return True
     
     else:
-        print("Pasta já existe")
+        # print("Pasta já existe")
         return False
 
 
 # Função para criar um arquivo
 def criar_arquivo(nome_cliente, diretorio, ext):
-    print(nome_cliente)
+    # print(nome_cliente)
     client = nome_cliente
     diretory = diretorio
     caminho = Path(diretory) / client / (client + str(ext))
@@ -27,11 +27,11 @@ def criar_arquivo(nome_cliente, diretorio, ext):
         path.touch()
         
         # Retornar uma confirmação sobre a criação do arquivo
-        print("Arquivo criado com sucesso")
+        # print("Arquivo criado com sucesso")
         return True
     
     else:
-        print("Arquivo já existe")
+        # print("Arquivo já existe")
         return False
 
 
@@ -49,4 +49,4 @@ def run(name, dir_file, ext, only_dir=False):
         return response
     
     except: return response
-    finally: print(response)
+    # finally: print(response)
