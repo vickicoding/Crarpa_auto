@@ -17,11 +17,11 @@ def criar_pasta(nome_cliente, diretorio):
 
 
 # Função para criar um arquivo
-def criar_arquivo(nome_cliente, diretorio, ext):
+def criar_arquivo(nome_cliente, folder, diretorio, ext, only=False):
     # print(nome_cliente)
     client = nome_cliente
     diretory = diretorio
-    caminho = Path(diretory) / client / (client + str(ext))
+    caminho = Path(diretory) / folder / (client + str(ext)) if not only else Path(diretory) / (client + str(ext))
     if not os.path.exists(caminho):
         path = Path(caminho)
         path.touch()
@@ -35,16 +35,19 @@ def criar_arquivo(nome_cliente, diretorio, ext):
         return False
 
 
-def run(name, dir_file, ext, only_dir=False):
+def run(name, folder, dir_file, ext, only_dir=False, only_file=False):
     name = name.strip()
     response = False
     
     try:
         if only_dir:
-            if criar_pasta(name, dir_file): response = True
+            if criar_pasta(folder, dir_file): response = True
+        
+        if only_file:
+            if criar_arquivo(name, folder, dir_file, ext, only=True): response = True
             
         else:
-            if criar_pasta(name, dir_file) and criar_arquivo(name, dir_file, ext): response = True
+            if criar_pasta(folder, dir_file) and criar_arquivo(name, folder, dir_file, ext): response = True
         
         return response
     
